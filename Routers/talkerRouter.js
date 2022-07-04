@@ -9,6 +9,15 @@ const talkerRouter = express.Router();
 
 const dataFilePath = './talker.json';
 
+ talkerRouter.get('/search', rescue(tokenValidator),
+  rescue((req, res, _next) => {
+    const { q } = req.query;
+    const talkers = readAndConvertFileToJSON(dataFilePath);
+    const filteredTalkers = talkers.filter((t) => t.name.toLowerCase().includes(q.toLowerCase()));
+    convertAndWriteJsonToFile(dataFilePath, filteredTalkers);
+    return res.status(200).json(filteredTalkers);
+  }));
+
 talkerRouter.get('/:id', rescue((req, res, _next) => {
   const id = parseInt(req.params.id, 10);
   const talkers = readAndConvertFileToJSON(dataFilePath);
@@ -43,6 +52,15 @@ talkerRouter.post('/', rescue(tokenValidator), rescue(schemaValidator(talkerSche
     talkers[talkerIndex] = talker;
     convertAndWriteJsonToFile(dataFilePath, talkers);
     return res.status(200).json(talker);
+  }));
+
+  talkerRouter.delete('/:id', rescue(tokenValidator),
+  rescue((req, res, _next) => {
+    const id = parseInt(req.params.id, 10);
+    const talkers = readAndConvertFileToJSON(dataFilePath);
+    const filteredTalkers = talkers.filter((t) => t.id !== id);
+    convertAndWriteJsonToFile(dataFilePath, filteredTalkers);
+    return res.status(204).end();
   }));
 
 module.exports = talkerRouter;
