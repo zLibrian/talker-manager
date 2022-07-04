@@ -18,7 +18,7 @@ module.exports = joi.object({
     .messages({
       'any.required': 'O campo "watchedAt" é obrigatório',
     }),
-    rate: joi.number().integer().max(5).min(0)
+    rate: joi.number().integer().max(5).min(1)
       .required()
       .messages({
         'number.base': 'O campo "rate" deve ser um inteiro de 1 à 5',
